@@ -8,30 +8,41 @@
         body {
             margin: 0;
             padding: 0;
+            height: 100vh;
+            background-color: #f5f5f5;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            background-color: #f5f5f5;
+        }
+
+        .container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .calculator {
             background-color: #333;
             border-radius: 20px;
-            padding: 20px;
+            padding: 40px;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
             color: #fff;
+            max-width: 80%;
+            max-height: 80%;
+            overflow: auto;
         }
 
         #display {
             width: calc(100% - 20px);
-            height: 40px;
-            margin-bottom: 10px;
-            padding: 5px;
-            font-size: 24px;
+            height: 80px;
+            margin-bottom: 20px;
+            padding: 10px;
+            font-size: 36px;
             text-align: right;
             border: none;
-            border-radius: 4px;
+            border-radius: 8px;
             background-color: #444;
             color: #fff;
         }
@@ -39,12 +50,12 @@
         .buttons {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            grid-gap: 10px;
+            grid-gap: 20px;
         }
 
         button {
-            padding: 10px;
-            font-size: 18px;
+            padding: 20px;
+            font-size: 24px;
             border: none;
             border-radius: 10px;
             cursor: pointer;
@@ -61,21 +72,13 @@
             background-color: #444;
         }
 
-        .dark-mode-label {
+        .dark-mode-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
             display: flex;
             align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .dark-mode-label span {
-            margin-right: 10px;
-        }
-
-        .dark-mode-toggle {
-            position: relative;
-            display: inline-block;
-            width: 60px;
-            height: 34px;
+            z-index: 999;
         }
 
         .dark-mode-toggle input {
@@ -85,26 +88,25 @@
         }
 
         .dark-mode-slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
+            width: 40px;
+            height: 20px;
             background-color: #ccc;
-            border-radius: 34px;
+            border-radius: 20px;
+            position: relative;
+            cursor: pointer;
             transition: background-color 0.3s ease;
         }
 
         .dark-mode-slider:before {
-            position: absolute;
             content: "";
-            height: 26px;
-            width: 26px;
-            left: 4px;
-            bottom: 4px;
+            width: 16px;
+            height: 16px;
             background-color: white;
             border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            left: 2px;
             transition: transform 0.3s ease;
         }
 
@@ -113,40 +115,42 @@
         }
 
         input:checked + .dark-mode-slider:before {
-            transform: translateX(26px);
+            transform: translateX(20px);
         }
     </style>
 </head>
 <body>
-    <div class="calculator">
-        <div class="dark-mode-label">
-            <span>Dark Mode:</span>
-            <label class="dark-mode-toggle">
+    <div class="container">
+        <div class="calculator">
+            <input type="text" id="display" readonly>
+            <div class="buttons">
+                <button onclick="clearDisplay()">C</button>
+                <button onclick="appendInput('**')">x<sup>y</sup></button>
+                <button onclick="appendInput('sqrt(')">√</button>
+                <button onclick="appendInput('/')">/</button>
+                <button onclick="appendInput('7')">7</button>
+                <button onclick="appendInput('8')">8</button>
+                <button onclick="appendInput('9')">9</button>
+                <button onclick="appendInput('*')">x</button>
+                <button onclick="appendInput('4')">4</button>
+                <button onclick="appendInput('5')">5</button>
+                <button onclick="appendInput('6')">6</button>
+                <button onclick="appendInput('-')">-</button>
+                <button onclick="appendInput('1')">1</button>
+                <button onclick="appendInput('2')">2</button>
+                <button onclick="appendInput('3')">3</button>
+                <button onclick="appendInput('+')">+</button>
+                <button onclick="appendInput('0')">0</button>
+                <button onclick="appendInput('.')">.</button>
+                <button onclick="evaluateExpression()">=</button>
+            </div>
+        </div>
+        <div class="dark-mode-toggle">
+            <label class="dark-mode-slider">
                 <input type="checkbox" id="darkModeToggle" onclick="toggleDarkMode()">
                 <span class="dark-mode-slider"></span>
             </label>
-        </div>
-        <input type="text" id="display" readonly>
-        <div class="buttons">
-            <button onclick="clearDisplay()">C</button>
-            <button onclick="appendInput('**')">x<sup>y</sup></button>
-            <button onclick="appendInput('sqrt(')">√</button>
-            <button onclick="appendInput('/')">/</button>
-            <button onclick="appendInput('7')">7</button>
-            <button onclick="appendInput('8')">8</button>
-            <button onclick="appendInput('9')">9</button>
-            <button onclick="appendInput('*')">x</button>
-            <button onclick="appendInput('4')">4</button>
-            <button onclick="appendInput('5')">5</button>
-            <button onclick="appendInput('6')">6</button>
-            <button onclick="appendInput('-')">-</button>
-            <button onclick="appendInput('1')">1</button>
-            <button onclick="appendInput('2')">2</button>
-            <button onclick="appendInput('3')">3</button>
-            <button onclick="appendInput('+')">+</button>
-            <button onclick="appendInput('0')">0</button>
-            <button onclick="appendInput('.')">.</button>
-            <button onclick="evaluateExpression()">=</button>
+            <span>Dark Mode</span>
         </div>
     </div>
     <script>
