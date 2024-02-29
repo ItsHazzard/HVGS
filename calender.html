@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Calendar</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1a1a2e; /* Midnight Blue */
+            color: #fff; /* White text */
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+        }
+
+        .calendar-header {
+            text-align: center;
+        }
+
+        .calendar-header th {
+            background-color: #0f4c75; /* Dark Cyan */
+            color: #fff;
+            padding: 10px;
+        }
+
+        .calendar-day {
+            border: 1px solid #253746; /* Darker Blue */
+            background-color: #16213e; /* Dark Blue */
+            padding: 10px;
+            position: relative;
+        }
+
+        .calendar-day:hover {
+            background-color: #1a1a2e; /* Midnight Blue */
+        }
+
+        .events-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: #253746; /* Darker Blue */
+            border: 1px solid #0f4c75; /* Dark Cyan */
+            border-top: none;
+            border-radius: 0 0 5px 5px;
+            width: 100%;
+            z-index: 1;
+            display: none;
+        }
+
+        .calendar-day:hover .events-list {
+            display: block;
+        }
+
+        .events-list li {
+            padding: 5px;
+            border-bottom: 1px solid #0f4c75; /* Dark Cyan */
+            color: #fff;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
+    <script type="text/yaml" id="event-data">
+        events:
+          - title: History summative task
+            date: "February 26, 2024"
+          - title: English summative task 1
+            date: "February 28, 2024"
+          - title: Maths test
+            date: "March 5, 2024"
+          - title: Science summative task
+            date: "March 12, 2024"
+          - title: Tech summative task
+            date: "March 22, 2024"
+          - title: English summative task 2
+            date: "March 27, 2024"
+          - title: Lacey & Jacob Birthday
+            date: "April 4, 2024"
+          - title: Camp
+            date: "April 9-14, 2024"
+    </script>
+</head>
+<body>
+    <h1>Event Calendar</h1>
+    <div class="calendar">
+        <table class="calendar-header">
+            <thead>
+                <tr>
+                    <th>Sun</th>
+                    <th>Mon</th>
+                    <th>Tue</th>
+                    <th>Wed</th>
+                    <th>Thu</th>
+                    <th>Fri</th>
+                    <th>Sat</th>
+                </tr>
+            </thead>
+            <tbody id="calendar-body">
+                <!-- Calendar days will be populated here -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // Parse YAML data
+        const yamlText = document.getElementById('event-data').innerText;
+        const data = jsyaml.load(yamlText);
+        const events = data.events;
+
+        // Group events by date
+        const eventsByDate = {};
+        events.forEach(event => {
+            const date = new Date(event.date);
+            const dateString = date.toDateString();
+            if (!eventsByDate[dateString]) {
+                eventsByDate[dateString] = [];
+            }
+            eventsByDate[dateString].push(event.title);
+        });
+
+        // Generate calendar days
+        const calendarBody = document.getElementById('calendar-body');
+        const currentDate = new Date();
+        const currentMonth = currentDate.getMonth();
+        const daysInMonth = new Date(currentDate.getFullYear(), currentMonth + 1, 0).getDate();
+        let dayOfWeek = new Date(currentDate.getFullYear(), currentMonth, 1).getDay(); // 0 for Sunday, 1 for Monday, ...
+        let dayCounter = 1;
+
+        for (let i = 0; i < 6; i++) {
+            const row = document.createElement('tr');
+            for (let j = 0; j < 7; j++) {
+                const cell = document.createElement('td');
+                if (i === 0 && j < dayOfWeek) {
+                    cell.textContent = ''; // Empty cell before the first day of the month
+                } else if (dayCounter > daysInMonth) {
+                    cell.textContent = ''; // Empty cell after the last day of the month
+                } else {
+                    const dateString = new Date(currentDate.getFullYear(), currentMonth, dayCounter).toDateString();
+                    cell.textContent = dayCounter;
+                    if (eventsByDate[dateString]) {
+                        const eventsList = document.createElement('ul');
+                        eventsByDate[dateString].forEach(eventTitle => {
+                            const eventItem = document.createElement('li');
+                            eventItem.textContent = eventTitle;
+                            eventsList.appendChild(eventItem);
+                        });
+                        cell.appendChild(eventsList);
+                    }
+                    dayCounter++;
+                }
+                row.appendChild(cell);
+            }
+            calendarBody.appendChild(row);
+        }
+    </script>
+</body>
+</html>
